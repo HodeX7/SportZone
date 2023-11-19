@@ -324,9 +324,9 @@ const Login = () => {
       console.log(err);
     }
   };
-  useEffect(() => {
-    connectWallet();
-  }, []);
+  // useEffect(() => {
+  //   connectWallet();
+  // }, []);
 
   return (
     <div className="container mx-auto mt-8">

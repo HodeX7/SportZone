@@ -5,6 +5,7 @@ import Modal from "react-modal";
 const CourseList = ({ contract }) => {
   const [courses, setCourses] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [enrollments, setEnrollments] = useState([]);
   const [newCourse, setNewCourse] = useState({
     title: "",
     description: "",
@@ -42,15 +43,36 @@ const CourseList = ({ contract }) => {
         enrolledStudents: course.enrolledStudents,
       }));
       setCourses(courses);
+      const userEnrollmentsArray = await contract.getCoursesByStudent();
+      const userEnrollments = userEnrollmentsArray.map((enrollment) => {
+        const courseId = enrollment[0];
+        return courseId;
+      });
+      setEnrollments(userEnrollments);
     } catch (error) {
       console.error("Error fetching courses:", error);
+    }
+  };
+
+  const handleEnroll = async (courseId) => {
+    try {
+      if (!enrollments.includes(courseId)) {
+        const priceWei = ethers.parseEther(courses[courseId].price);
+        await contract.enroll(courseId, { value: priceWei });
+        getCoursesFromBlockchain();
+      } else {
+        alert("Already enrolled in this course");
+      }
+    } catch (error) {
+      console.error("Error enrolling in the course:", error);
     }
   };
 
   return (
     <div className="container mx-auto mt-8">
       <h1 className="text-3xl font-semibold mb-4 flex justify-between items-center">
-        Courses List
+        Market your courses with
+        <span className="text-red-300">EduMarketeers</span>
         <button
           className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition duration-300"
           onClick={() => setIsModalOpen(true)}
@@ -60,7 +82,7 @@ const CourseList = ({ contract }) => {
       </h1>
 
       {courses.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 gap-4">
           {courses.map((course, index) => (
             <div
               key={index}
@@ -69,9 +91,19 @@ const CourseList = ({ contract }) => {
               <h2 className="text-xl font-semibold mb-2">{course.title}</h2>
               <p className="text-gray-600 mb-2">{course.description}</p>
               <p className="text-gray-700">Price: {course.price} ETH</p>
-              <button className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300">
-                Enroll
-              </button>
+              <p className="text-gray-700">Creator: {course.creator}</p>
+              {enrollments.includes(course.title) ? (
+                <button className="mt-4 bg-gray-500 text-white px-4 py-2 rounded-md cursor-not-allowed">
+                  Already Enrolled
+                </button>
+              ) : (
+                <button
+                  onClick={() => handleEnroll(index)}
+                  className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300"
+                >
+                  Enroll
+                </button>
+              )}
             </div>
           ))}
         </div>
