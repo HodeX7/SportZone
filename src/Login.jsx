@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import RetailMart from "./RetailMart";
+import SportZone from "./SportZone";
 import { Web3Provider } from "@ethersproject/providers";
 import { ethers } from "ethers";
 
@@ -8,7 +8,7 @@ const Login = () => {
   const [contract, setContract] = useState(null);
 
   const connectWallet = async () => {
-    const Address = "0x86441C90373DE17547cF34d17741dCDEfe0Ba3D1";
+    const Address = "0x81a797307ec16a23b8b4d2B7D012DBE5A6623626";
     const ABI = [
       {
         inputs: [],
@@ -21,7 +21,7 @@ const Login = () => {
           {
             indexed: false,
             internalType: "uint256",
-            name: "productId",
+            name: "tournamentId",
             type: "uint256",
           },
           {
@@ -39,7 +39,7 @@ const Login = () => {
           {
             indexed: false,
             internalType: "uint256",
-            name: "price",
+            name: "entryFee",
             type: "uint256",
           },
           {
@@ -49,7 +49,7 @@ const Login = () => {
             type: "address",
           },
         ],
-        name: "ProductAdded",
+        name: "TournamentAdded",
         type: "event",
       },
       {
@@ -58,17 +58,17 @@ const Login = () => {
           {
             indexed: false,
             internalType: "uint256",
-            name: "productId",
+            name: "tournamentId",
             type: "uint256",
           },
           {
             indexed: false,
             internalType: "address",
-            name: "buyer",
+            name: "participant",
             type: "address",
           },
         ],
-        name: "ProductPurchased",
+        name: "TournamentParticipated",
         type: "event",
       },
       {
@@ -90,18 +90,18 @@ const Login = () => {
           },
           {
             internalType: "uint256",
-            name: "_price",
+            name: "_entryFee",
             type: "uint256",
           },
         ],
-        name: "addProduct",
+        name: "addTournament",
         outputs: [],
         stateMutability: "nonpayable",
         type: "function",
       },
       {
         inputs: [],
-        name: "getProducts",
+        name: "getTournaments",
         outputs: [
           {
             components: [
@@ -117,7 +117,7 @@ const Login = () => {
               },
               {
                 internalType: "uint256",
-                name: "price",
+                name: "entryFee",
                 type: "uint256",
               },
               {
@@ -127,51 +127,11 @@ const Login = () => {
               },
               {
                 internalType: "address[]",
-                name: "buyers",
+                name: "participants",
                 type: "address[]",
               },
             ],
-            internalType: "struct RetailMart.Product[]",
-            name: "",
-            type: "tuple[]",
-          },
-        ],
-        stateMutability: "view",
-        type: "function",
-      },
-      {
-        inputs: [],
-        name: "getProductsByBuyer",
-        outputs: [
-          {
-            components: [
-              {
-                internalType: "string",
-                name: "name",
-                type: "string",
-              },
-              {
-                internalType: "string",
-                name: "description",
-                type: "string",
-              },
-              {
-                internalType: "uint256",
-                name: "price",
-                type: "uint256",
-              },
-              {
-                internalType: "string",
-                name: "imageURL",
-                type: "string",
-              },
-              {
-                internalType: "address[]",
-                name: "buyers",
-                type: "address[]",
-              },
-            ],
-            internalType: "struct RetailMart.Product[]",
+            internalType: "struct SportZone.Tournament[]",
             name: "",
             type: "tuple[]",
           },
@@ -196,11 +156,24 @@ const Login = () => {
         inputs: [
           {
             internalType: "uint256",
+            name: "tournamentId",
+            type: "uint256",
+          },
+        ],
+        name: "participateInTournament",
+        outputs: [],
+        stateMutability: "payable",
+        type: "function",
+      },
+      {
+        inputs: [
+          {
+            internalType: "uint256",
             name: "",
             type: "uint256",
           },
         ],
-        name: "products",
+        name: "tournaments",
         outputs: [
           {
             internalType: "string",
@@ -214,7 +187,7 @@ const Login = () => {
           },
           {
             internalType: "uint256",
-            name: "price",
+            name: "entryFee",
             type: "uint256",
           },
           {
@@ -239,7 +212,7 @@ const Login = () => {
             type: "uint256",
           },
         ],
-        name: "productsByBuyer",
+        name: "tournamentsByParticipant",
         outputs: [
           {
             internalType: "uint256",
@@ -248,19 +221,6 @@ const Login = () => {
           },
         ],
         stateMutability: "view",
-        type: "function",
-      },
-      {
-        inputs: [
-          {
-            internalType: "uint256",
-            name: "productId",
-            type: "uint256",
-          },
-        ],
-        name: "purchaseProduct",
-        outputs: [],
-        stateMutability: "payable",
         type: "function",
       },
     ];
@@ -285,14 +245,14 @@ const Login = () => {
   };
 
   return (
-    <div className="h-screen flex items-center justify-center bg-black bg-cover">
+    <div className="h-screen flex items-center justify-center bg-gradient-to-r from-purple-800 to-blue-600 ">
       {account ? (
-        <RetailMart contract={contract} account={account} />
+        <SportZone contract={contract} account={account} />
       ) : (
         <>
           <button
             onClick={connectWallet}
-            className="bg-white text-black px-10 py-8 rounded-md hover:bg-blue-950 hover:text-white transition duration-300"
+            className="bg-white text-black px-10 py-8 rounded-md hover:bg-gradient-to-r from-purple-300 to-blue-200 hover:text-black transition duration-300"
             style={{ opacity: 0.7 }}
           >
             Connect with MetaMask
