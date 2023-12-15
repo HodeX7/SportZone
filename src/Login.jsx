@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import CourseList from "./CourseList";
+import RetailMart from "./RetailMart";
 import { Web3Provider } from "@ethersproject/providers";
 import { ethers } from "ethers";
 
@@ -8,21 +8,26 @@ const Login = () => {
   const [contract, setContract] = useState(null);
 
   const connectWallet = async () => {
-    const Address = "0xc449C80d06e2639187a5E6e592b8B958Ab95B954";
+    const Address = "0x86441C90373DE17547cF34d17741dCDEfe0Ba3D1";
     const ABI = [
       {
+        inputs: [],
+        stateMutability: "nonpayable",
+        type: "constructor",
+      },
+      {
         anonymous: false,
         inputs: [
           {
             indexed: false,
             internalType: "uint256",
-            name: "courseId",
+            name: "productId",
             type: "uint256",
           },
           {
             indexed: false,
             internalType: "string",
-            name: "title",
+            name: "name",
             type: "string",
           },
           {
@@ -40,11 +45,11 @@ const Login = () => {
           {
             indexed: false,
             internalType: "address",
-            name: "creator",
+            name: "owner",
             type: "address",
           },
         ],
-        name: "CourseCreated",
+        name: "ProductAdded",
         type: "event",
       },
       {
@@ -53,106 +58,24 @@ const Login = () => {
           {
             indexed: false,
             internalType: "uint256",
-            name: "courseId",
+            name: "productId",
             type: "uint256",
           },
           {
             indexed: false,
             internalType: "address",
-            name: "student",
+            name: "buyer",
             type: "address",
           },
         ],
-        name: "CourseEnrolled",
+        name: "ProductPurchased",
         type: "event",
       },
       {
         inputs: [
           {
-            internalType: "uint256",
-            name: "",
-            type: "uint256",
-          },
-        ],
-        name: "courses",
-        outputs: [
-          {
             internalType: "string",
-            name: "title",
-            type: "string",
-          },
-          {
-            internalType: "string",
-            name: "description",
-            type: "string",
-          },
-          {
-            internalType: "uint256",
-            name: "price",
-            type: "uint256",
-          },
-          {
-            internalType: "address",
-            name: "creator",
-            type: "address",
-          },
-        ],
-        stateMutability: "view",
-        type: "function",
-      },
-      {
-        inputs: [
-          {
-            internalType: "address",
-            name: "",
-            type: "address",
-          },
-          {
-            internalType: "uint256",
-            name: "",
-            type: "uint256",
-          },
-        ],
-        name: "coursesByCreator",
-        outputs: [
-          {
-            internalType: "uint256",
-            name: "",
-            type: "uint256",
-          },
-        ],
-        stateMutability: "view",
-        type: "function",
-      },
-      {
-        inputs: [
-          {
-            internalType: "address",
-            name: "",
-            type: "address",
-          },
-          {
-            internalType: "uint256",
-            name: "",
-            type: "uint256",
-          },
-        ],
-        name: "coursesByStudent",
-        outputs: [
-          {
-            internalType: "uint256",
-            name: "",
-            type: "uint256",
-          },
-        ],
-        stateMutability: "view",
-        type: "function",
-      },
-      {
-        inputs: [
-          {
-            internalType: "string",
-            name: "_title",
+            name: "_name",
             type: "string",
           },
           {
@@ -161,147 +84,183 @@ const Login = () => {
             type: "string",
           },
           {
+            internalType: "string",
+            name: "_imageURL",
+            type: "string",
+          },
+          {
             internalType: "uint256",
             name: "_price",
             type: "uint256",
           },
         ],
-        name: "createCourse",
+        name: "addProduct",
         outputs: [],
         stateMutability: "nonpayable",
+        type: "function",
+      },
+      {
+        inputs: [],
+        name: "getProducts",
+        outputs: [
+          {
+            components: [
+              {
+                internalType: "string",
+                name: "name",
+                type: "string",
+              },
+              {
+                internalType: "string",
+                name: "description",
+                type: "string",
+              },
+              {
+                internalType: "uint256",
+                name: "price",
+                type: "uint256",
+              },
+              {
+                internalType: "string",
+                name: "imageURL",
+                type: "string",
+              },
+              {
+                internalType: "address[]",
+                name: "buyers",
+                type: "address[]",
+              },
+            ],
+            internalType: "struct RetailMart.Product[]",
+            name: "",
+            type: "tuple[]",
+          },
+        ],
+        stateMutability: "view",
+        type: "function",
+      },
+      {
+        inputs: [],
+        name: "getProductsByBuyer",
+        outputs: [
+          {
+            components: [
+              {
+                internalType: "string",
+                name: "name",
+                type: "string",
+              },
+              {
+                internalType: "string",
+                name: "description",
+                type: "string",
+              },
+              {
+                internalType: "uint256",
+                name: "price",
+                type: "uint256",
+              },
+              {
+                internalType: "string",
+                name: "imageURL",
+                type: "string",
+              },
+              {
+                internalType: "address[]",
+                name: "buyers",
+                type: "address[]",
+              },
+            ],
+            internalType: "struct RetailMart.Product[]",
+            name: "",
+            type: "tuple[]",
+          },
+        ],
+        stateMutability: "view",
+        type: "function",
+      },
+      {
+        inputs: [],
+        name: "owner",
+        outputs: [
+          {
+            internalType: "address",
+            name: "",
+            type: "address",
+          },
+        ],
+        stateMutability: "view",
         type: "function",
       },
       {
         inputs: [
           {
             internalType: "uint256",
-            name: "courseId",
+            name: "",
             type: "uint256",
           },
         ],
-        name: "enroll",
+        name: "products",
+        outputs: [
+          {
+            internalType: "string",
+            name: "name",
+            type: "string",
+          },
+          {
+            internalType: "string",
+            name: "description",
+            type: "string",
+          },
+          {
+            internalType: "uint256",
+            name: "price",
+            type: "uint256",
+          },
+          {
+            internalType: "string",
+            name: "imageURL",
+            type: "string",
+          },
+        ],
+        stateMutability: "view",
+        type: "function",
+      },
+      {
+        inputs: [
+          {
+            internalType: "address",
+            name: "",
+            type: "address",
+          },
+          {
+            internalType: "uint256",
+            name: "",
+            type: "uint256",
+          },
+        ],
+        name: "productsByBuyer",
+        outputs: [
+          {
+            internalType: "uint256",
+            name: "",
+            type: "uint256",
+          },
+        ],
+        stateMutability: "view",
+        type: "function",
+      },
+      {
+        inputs: [
+          {
+            internalType: "uint256",
+            name: "productId",
+            type: "uint256",
+          },
+        ],
+        name: "purchaseProduct",
         outputs: [],
         stateMutability: "payable",
-        type: "function",
-      },
-      {
-        inputs: [],
-        name: "getCourses",
-        outputs: [
-          {
-            components: [
-              {
-                internalType: "string",
-                name: "title",
-                type: "string",
-              },
-              {
-                internalType: "string",
-                name: "description",
-                type: "string",
-              },
-              {
-                internalType: "uint256",
-                name: "price",
-                type: "uint256",
-              },
-              {
-                internalType: "address",
-                name: "creator",
-                type: "address",
-              },
-              {
-                internalType: "address[]",
-                name: "enrolledStudents",
-                type: "address[]",
-              },
-            ],
-            internalType: "struct Courses.Course[]",
-            name: "",
-            type: "tuple[]",
-          },
-        ],
-        stateMutability: "view",
-        type: "function",
-      },
-      {
-        inputs: [],
-        name: "getCoursesByCreator",
-        outputs: [
-          {
-            components: [
-              {
-                internalType: "string",
-                name: "title",
-                type: "string",
-              },
-              {
-                internalType: "string",
-                name: "description",
-                type: "string",
-              },
-              {
-                internalType: "uint256",
-                name: "price",
-                type: "uint256",
-              },
-              {
-                internalType: "address",
-                name: "creator",
-                type: "address",
-              },
-              {
-                internalType: "address[]",
-                name: "enrolledStudents",
-                type: "address[]",
-              },
-            ],
-            internalType: "struct Courses.Course[]",
-            name: "",
-            type: "tuple[]",
-          },
-        ],
-        stateMutability: "view",
-        type: "function",
-      },
-      {
-        inputs: [],
-        name: "getCoursesByStudent",
-        outputs: [
-          {
-            components: [
-              {
-                internalType: "string",
-                name: "title",
-                type: "string",
-              },
-              {
-                internalType: "string",
-                name: "description",
-                type: "string",
-              },
-              {
-                internalType: "uint256",
-                name: "price",
-                type: "uint256",
-              },
-              {
-                internalType: "address",
-                name: "creator",
-                type: "address",
-              },
-              {
-                internalType: "address[]",
-                name: "enrolledStudents",
-                type: "address[]",
-              },
-            ],
-            internalType: "struct Courses.Course[]",
-            name: "",
-            type: "tuple[]",
-          },
-        ],
-        stateMutability: "view",
         type: "function",
       },
     ];
@@ -324,22 +283,21 @@ const Login = () => {
       console.log(err);
     }
   };
-  // useEffect(() => {
-  //   connectWallet();
-  // }, []);
 
   return (
-    <div className="container mx-auto mt-8">
-      {console.log(account)}
+    <div className="h-screen flex items-center justify-center bg-black bg-cover">
       {account ? (
-        <CourseList contract={contract} />
+        <RetailMart contract={contract} account={account} />
       ) : (
-        <button
-          onClick={connectWallet}
-          className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300"
-        >
-          Connect with MetaMask
-        </button>
+        <>
+          <button
+            onClick={connectWallet}
+            className="bg-white text-black px-10 py-8 rounded-md hover:bg-blue-950 hover:text-white transition duration-300"
+            style={{ opacity: 0.7 }}
+          >
+            Connect with MetaMask
+          </button>
+        </>
       )}
     </div>
   );
